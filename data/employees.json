@@ -1,0 +1,9 @@
+[
+    { "EmpID": 12, "Name": "Karan", "Salary": 2000 },
+    { "EmpID": 15, "Name": "Uppal", "Salary": 4500 },
+    { "EmpID": 125, "Name": "Mohan", "Salary": 64000 },
+    { "EmpID": 32, "Name": "Nadeem", "Salary": 4300 },
+    { "EmpID": 17, "Name": "Jayesh", "Salary": 3200 },
+    { "EmpID": 19, "Name": "Nidhi", "Salary": 2000 }
+  ]
+  

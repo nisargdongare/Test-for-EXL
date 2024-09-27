@@ -1,131 +1,104 @@
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import { useState } from 'react';
+import axios from 'axios';
 
 export default function Home() {
+  const [empId, setEmpId] = useState('');
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setResult(null);
+    setError('');
+
+    if (!empId) {
+      setError('Please enter an Emp ID.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/calculateBonus', { empId: parseInt(empId) });
+      setResult(response.data);
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('An unexpected error occurred.');
+      }
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div style={styles.container}>
+      <h1>Employee Bonus Calculator</h1>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <label>
+          Enter Emp ID:
+          <input
+            type="number"
+            value={empId}
+            onChange={(e) => setEmpId(e.target.value)}
+            style={styles.input}
+            required
+          />
+        </label>
+        <button type="submit" style={styles.button}>Calculate Bonus</button>
+      </form>
 
-      <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      {error && <p style={styles.error}>{error}</p>}
 
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      {result && (
+        <div style={styles.result}>
+          <h2>Employee Details</h2>
+          <p><strong>Emp ID:</strong> {result.EmpID}</p>
+          <p><strong>Name:</strong> {result.Name}</p>
+          <p><strong>Current Salary:</strong> ₹{result.Salary}</p>
+          <p><strong>Bonus Percentage:</strong> {result.BonusPercentage}</p>
+          <p><strong>Bonus Amount:</strong> ₹{result.BonusAmount}</p>
+          <p><strong>Addon Salary:</strong> ₹{result.AddonSalary}</p>
+          <p><strong>Total Salary:</strong> ₹{result.TotalSalary}</p>
+          <p style={styles.error}>Developed By Nisarg for test purpose. ;-)</p>
         </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        footer img {
-          margin-left: 0.5rem;
-        }
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-        }
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family:
-            Menlo,
-            Monaco,
-            Lucida Console,
-            Liberation Mono,
-            DejaVu Sans Mono,
-            Bitstream Vera Sans Mono,
-            Courier New,
-            monospace;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family:
-            -apple-system,
-            BlinkMacSystemFont,
-            Segoe UI,
-            Roboto,
-            Oxygen,
-            Ubuntu,
-            Cantarell,
-            Fira Sans,
-            Droid Sans,
-            Helvetica Neue,
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
+      )}
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: '600px',
+    margin: '50px auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    textAlign: 'center',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+  },
+  form: {
+    marginBottom: '20px'
+  },
+  input: {
+    marginLeft: '10px',
+    padding: '8px',
+    fontSize: '16px',
+    width: '150px'
+  },
+  button: {
+    marginLeft: '10px',
+    padding: '8px 16px',
+    fontSize: '16px',
+    cursor: 'pointer'
+  },
+  error: {
+    color: 'red'
+  },
+  result: {
+    textAlign: 'left',
+    marginTop: '20px',
+    padding: '10px',
+    border: '1px solid #4CAF50',
+    borderRadius: '5px',
+    backgroundColor: '#f9fff9'
+  }
+};

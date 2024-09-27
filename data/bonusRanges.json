@@ -1,0 +1,6 @@
+[
+    { "min": 0, "max": 2000, "bonusPercentage": 10 },
+    { "min": 2001, "max": 5000, "bonusPercentage": 15 },
+    { "min": 5001, "max": null, "bonusPercentage": 20 }
+  ]
+  
